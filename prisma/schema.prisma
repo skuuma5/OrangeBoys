@@ -1,0 +1,131 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?
+  access_token       String?
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  role          String        @default("USER")
+  accounts      Account[]
+  sessions      Session[]
+  watchlist     Content[] @relation("UserWatchlist")
+  history       History[]
+}
+
+model Content {
+  id            String   @id @default(cuid())
+  title         String
+  originalTitle String?
+  description   String
+  type          String
+  releaseDate   String
+  rating        Float
+  duration      String?
+  genres        Genre[]
+  backdropUrl   String
+  posterUrl     String
+  trailerUrl    String?
+  status        String?
+
+  // For series/anime
+  seasons       Season[]
+
+  // Metadata & Config
+  tmdbId        String?
+  isFeatured    Boolean  @default(false)
+  isTrending    Boolean  @default(false)
+
+  usersWatchlist User[]  @relation("UserWatchlist")
+  history       History[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Genre {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  contents Content[]
+}
+
+model Season {
+  id            String    @id @default(cuid())
+  number        Int
+  contentId     String
+  content       Content   @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  episodes      Episode[]
+}
+
+model Episode {
+  id            String   @id @default(cuid())
+  number        Int
+  title         String
+  description   String?
+  duration      String?
+  stillUrl      String?
+  seasonId      String
+  season        Season   @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  sources       Source[]
+}
+
+model Source {
+  id        String   @id @default(cuid())
+  name      String   // e.g., "Server 1", "HLS"
+  url       String
+  quality   String?  // e.g., "1080p", "4K"
+  episodeId String?
+  episode   Episode? @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+  movieId   String?
+  // movie reference would go here if not using Episode structure for movies
+}
+
+model History {
+  id        String   @id @default(cuid())
+  userId    String
+  contentId String
+  progress  Int      // percentage
+  season    Int?
+  episode   Int?
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content   Content  @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, contentId])
+}
