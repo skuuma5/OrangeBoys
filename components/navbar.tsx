@@ -87,21 +87,23 @@ export function Navbar() {
 
       <nav
         aria-label="Mobile navigation"
-        className="fixed bottom-4 left-1/2 z-50 flex h-16 w-[calc(100%-32px)] max-w-md -translate-x-1/2 items-center justify-around rounded-full border border-white/10 bg-black/80 px-2 shadow-2xl backdrop-blur-2xl md:hidden"
+        className={`fixed bottom-4 left-1/2 z-50 flex h-16 w-[calc(100%-32px)] max-w-md -translate-x-1/2 items-center justify-around rounded-full border border-white/10 bg-black/80 px-2 shadow-2xl backdrop-blur-2xl transition-transform md:hidden ${
+          isMobileMenuOpen ? "translate-y-24 -translate-x-1/2" : ""
+        }`}
       >
-        <Link href="/" aria-label="Home" className="flex h-12 w-12 items-center justify-center rounded-full text-white/70 transition-colors hover:text-white">
+        <Link href="/" aria-label="Home" className={`flex h-12 w-12 items-center justify-center rounded-full transition-colors ${pathname === "/" ? "bg-white/10 text-primary" : "text-white/70 hover:text-white"}`}>
           <Home className="h-5 w-5" />
         </Link>
-        <Link href="/movies" aria-label="Movies" className="flex h-12 w-12 items-center justify-center rounded-full text-white/70 transition-colors hover:text-white">
+        <Link href="/movies" aria-label="Movies" className={`flex h-12 w-12 items-center justify-center rounded-full transition-colors ${pathname.startsWith("/movies") || pathname.startsWith("/movie") ? "bg-white/10 text-primary" : "text-white/70 hover:text-white"}`}>
           <Film className="h-5 w-5" />
         </Link>
         <Link href="/search" aria-label="Search" className="flex h-12 w-12 -translate-y-2 items-center justify-center rounded-full bg-primary text-white shadow-[0_6px_24px_rgba(255,106,0,0.45)] ring-4 ring-black/70 transition-transform hover:scale-105">
           <Search className="h-5 w-5" />
         </Link>
-        <Link href="/series" aria-label="Shows" className="flex h-12 w-12 items-center justify-center rounded-full text-white/70 transition-colors hover:text-white">
+        <Link href="/series" aria-label="Shows" className={`flex h-12 w-12 items-center justify-center rounded-full transition-colors ${pathname.startsWith("/series") ? "bg-white/10 text-primary" : "text-white/70 hover:text-white"}`}>
           <Tv className="h-5 w-5" />
         </Link>
-        <Link href="/watchlist" aria-label="My List" className="flex h-12 w-12 items-center justify-center rounded-full text-white/70 transition-colors hover:text-white">
+        <Link href="/watchlist" aria-label="My List" className={`flex h-12 w-12 items-center justify-center rounded-full transition-colors ${pathname.startsWith("/watchlist") ? "bg-white/10 text-primary" : "text-white/70 hover:text-white"}`}>
           <Bookmark className="h-5 w-5" />
         </Link>
       </nav>
