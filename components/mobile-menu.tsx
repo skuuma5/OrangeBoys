@@ -21,7 +21,7 @@ const menuItems = [
 ]
 
 export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
-  const { status } = useSession()
+  const { data: session, status } = useSession()
   const pathname = usePathname()
 
   React.useEffect(() => {
@@ -98,14 +98,16 @@ export function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                 <User className="h-5 w-5" />
                 Profile
               </Link>
-              <Link
-                href="/admin"
-                onClick={onClose}
-                className="flex items-center gap-4 rounded-xl px-4 py-3 text-base font-bold text-white/65 transition-all hover:bg-white/5 hover:text-white"
-              >
-                <Settings className="h-5 w-5" />
-                Admin Panel
-              </Link>
+              {session?.user?.role === "ADMIN" && (
+                <Link
+                  href="/admin"
+                  onClick={onClose}
+                  className="flex items-center gap-4 rounded-xl px-4 py-3 text-base font-bold text-white/65 transition-all hover:bg-white/5 hover:text-white"
+                >
+                  <Settings className="h-5 w-5" />
+                  Admin Panel
+                </Link>
+              )}
             </div>
 
             <div className="mt-auto pt-4">

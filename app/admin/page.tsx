@@ -4,25 +4,35 @@ import {
   Tv,
   Eye,
   TrendingUp,
-  Clock,
-  Plus,
   Settings
 } from "lucide-react"
+import { prisma } from "@/lib/prisma"
 
-export default function AdminDashboard() {
+export default async function AdminDashboard() {
+  const [totalUsers, totalContent, totalHistory] = await Promise.all([
+    prisma.user.count(),
+    prisma.content.count(),
+    prisma.history.count(),
+  ])
+  const featuredContent = await prisma.content.findMany({
+    take: 4,
+    orderBy: { updatedAt: "desc" },
+    select: { title: true, type: true, updatedAt: true },
+  })
+
   const stats = [
-    { label: "Total Users", value: "1,284", icon: Users, color: "text-blue-400", trend: "+12%" },
-    { label: "Total Movies", value: "450", icon: Film, color: "text-orange-400", trend: "+5%" },
-    { label: "Total Series", value: "120", icon: Tv, color: "text-purple-400", trend: "+2%" },
-    { label: "Active Views", value: "892", icon: Eye, color: "text-green-400", trend: "+18%" },
+    { label: "Total Users", value: totalUsers.toLocaleString(), icon: Users, color: "text-blue-400", trend: "Live" },
+    { label: "Catalog Items", value: totalContent.toLocaleString(), icon: Film, color: "text-orange-400", trend: "Live" },
+    { label: "Watch History", value: totalHistory.toLocaleString(), icon: Tv, color: "text-purple-400", trend: "Live" },
+    { label: "Active Views", value: totalHistory.toLocaleString(), icon: Eye, color: "text-green-400", trend: "Live" },
   ]
 
-  const recentContent = [
-    { title: "The Last Horizon", type: "Movie", date: "2 hours ago", status: "Published" },
-    { title: "Neon Eclipse", type: "Movie", date: "5 hours ago", status: "Published" },
-    { title: "Soulbound", type: "Anime", date: "1 day ago", status: "Draft" },
-    { title: "City of Shadows", type: "Series", date: "2 days ago", status: "Published" },
-  ]
+  const recentContent = featuredContent.map((item) => ({
+    title: item.title,
+    type: item.type === "anime" ? "Anime" : item.type === "series" ? "Series" : "Movie",
+    date: item.updatedAt.toLocaleDateString(),
+    status: "Published",
+  }))
 
   return (
     <div className="space-y-8">
@@ -31,10 +41,6 @@ export default function AdminDashboard() {
           <h1 className="text-3xl font-bold">Dashboard</h1>
           <p className="text-gray-400">Welcome back, Admin. Here's what's happening today.</p>
         </div>
-        <button className="flex items-center gap-2 bg-primary px-4 py-2 rounded-xl font-bold text-white hover:bg-primary/90 transition-all orange-glow">
-          <Plus className="h-5 w-5" />
-          Add Content
-        </button>
       </div>
 
       {/* Stats Grid */}
@@ -103,12 +109,6 @@ export default function AdminDashboard() {
           </div>
 
           <div className="pt-4 border-t border-white/5">
-            <h4 className="text-sm font-bold mb-3 flex items-center gap-2">
-              <Clock className="h-4 w-4 text-primary" />
-              Backup Schedule
-            </h4>
-            <p className="text-xs text-gray-500">Last backup: 4 hours ago</p>
-            <p className="text-xs text-gray-500">Next backup: In 8 hours</p>
           </div>
         </div>
       </div>

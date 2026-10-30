@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { ArrowUp } from "lucide-react"
 
 export function Footer() {
   return (
@@ -37,6 +38,13 @@ export function Footer() {
 
         <p className="mt-6 text-xs text-white/30">© 2026 OrangeBoys. All rights reserved.</p>
       </div>
+      <Link
+        href="#top"
+        aria-label="Back to top"
+        className="fixed bottom-24 right-4 z-[45] flex h-11 w-11 items-center justify-center rounded-full border border-primary/60 bg-zinc-950/90 text-primary shadow-lg backdrop-blur-md transition-all hover:bg-primary hover:text-white md:bottom-7 md:right-8"
+      >
+        <ArrowUp className="h-5 w-5" />
+      </Link>
     </footer>
   )
 }

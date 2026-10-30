@@ -6,6 +6,8 @@ import { Search, User, Menu, Settings, Home, Film, Tv, Bookmark } from "lucide-r
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { MobileMenu } from "./mobile-menu"
+import { useSession } from "next-auth/react"
+import { Shield } from "lucide-react"
 
 const navItems = [
   { name: "Home", href: "/" },
@@ -16,6 +18,7 @@ const navItems = [
 
 export function Navbar() {
   const pathname = usePathname()
+  const { data: session } = useSession()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false)
 
   return (
@@ -53,6 +56,22 @@ export function Navbar() {
           </div>
 
           <div className="flex shrink-0 items-center gap-2">
+            {session?.user?.role === "ADMIN" && (
+              <Link
+                href="/admin"
+                aria-label="Admin panel"
+                className="hidden h-11 w-11 items-center justify-center rounded-full text-primary transition-colors hover:bg-white/10 md:flex"
+              >
+                <Shield className="h-5 w-5" />
+              </Link>
+            )}
+            <Link
+              href="/search"
+              aria-label="Search"
+              className="hidden h-11 w-11 items-center justify-center rounded-full text-white/85 transition-colors hover:bg-white/10 hover:text-white md:flex"
+            >
+              <Search className="h-5 w-5" />
+            </Link>
             <Link
               href="/profile"
               aria-label="Settings"

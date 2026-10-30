@@ -89,13 +89,22 @@ export const authOptions: NextAuthOptions = {
         return token
       }
 
+      const adminEmail =
+        process.env.ADMIN_EMAIL?.trim().toLowerCase() ||
+        "support.orangeboys@gmail.com"
+      const role =
+        (adminEmail && dbUser.email?.toLowerCase() === adminEmail) ||
+        dbUser.role === "ADMIN"
+          ? "ADMIN"
+          : dbUser.role || "USER"
+
       return {
         ...token,
         id: dbUser.id,
         name: dbUser.name,
         email: dbUser.email,
         picture: dbUser.image,
-        role: dbUser.role,
+        role,
       }
     },
   },
