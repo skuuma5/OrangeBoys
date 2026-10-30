@@ -3,13 +3,7 @@ import { ArrowUp } from "lucide-react"
 
 export function Footer() {
   return (
-    <footer id="footer" className="relative isolate overflow-hidden border-t border-white/10 bg-white/[0.025] px-5 py-16 backdrop-blur-2xl md:px-10 md:py-20">
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute bottom-[-12rem] left-[-8rem] h-[28rem] w-[28rem] rounded-full bg-primary/15 blur-[100px]" />
-        <div className="absolute bottom-[-14rem] right-[-8rem] h-[32rem] w-[32rem] rounded-full bg-red-700/20 blur-[110px]" />
-        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/40 to-transparent" />
-      </div>
-
+    <footer id="footer" className="relative isolate bg-transparent px-5 py-16 md:px-10 md:py-20">
       <div className="mx-auto flex max-w-[1600px] flex-col items-center text-center">
         <Link href="/" aria-label="OrangeBoys home" className="group mb-5 flex items-center gap-3">
           <img
