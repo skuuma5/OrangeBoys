@@ -2,6 +2,7 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
+import { AdminSignOut } from "@/components/admin-sign-out"
 import {
   LayoutDashboard,
   Film,
@@ -48,6 +49,9 @@ export default async function AdminLayout({
           <AdminNavItem href="/admin/users" icon={Users} label="Users" />
           <AdminNavItem href="/admin/settings" icon={Settings} label="Settings" />
         </nav>
+        <div className="absolute bottom-6 left-4 right-4">
+          <AdminSignOut />
+        </div>
 
       </aside>
 
