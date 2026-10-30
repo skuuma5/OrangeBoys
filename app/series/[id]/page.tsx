@@ -6,6 +6,7 @@ import { MyListButton } from "@/components/my-list-button"
 import { ShareButton } from "@/components/share-button"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
+import { getTVPlayerSources } from "@/lib/player-sources"
 
 export default async function SeriesDetailsPage({
   params,
@@ -24,11 +25,8 @@ export default async function SeriesDetailsPage({
   const cast = (data.credits?.cast || []).slice(0, 10)
   const similarSeries = (data.similar?.results || []).slice(0, 12).map((item: any) => mapTMDBContent(item, "series"))
   const videos = (data.videos?.results || []).filter((video: any) => video.site === "YouTube" && ["Trailer", "Teaser"].includes(video.type)).slice(0, 6)
-  const playerUrl = `https://vidsrc.xyz/embed/tv?tmdb=${params.id}&season=${activeSeason}&episode=${activeEpisode}&autoplay=1`
-  const playerFallbackUrls = [
-    `https://vidsrc.to/embed/tv/${params.id}/${activeSeason}/${activeEpisode}?autoplay=1`,
-    `https://www.2embed.cc/embed/tv/${params.id}/${activeSeason}/${activeEpisode}`,
-  ]
+  const playerSources = getTVPlayerSources(params.id, activeSeason, activeEpisode)
+  const playerUrl = playerSources[0].url
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -142,7 +140,7 @@ export default async function SeriesDetailsPage({
 
         <section id="player" className="scroll-mt-28 py-10">
           <h2 className="mb-6 text-2xl font-bold">Watch {series.title}</h2>
-          <VideoPlayer title={`${series.title} - S${activeSeason}:E${activeEpisode}`} embedUrl={playerUrl} fallbackEmbedUrls={playerFallbackUrls} history={{ tmdbId: params.id, type: "series", title: series.title, description: series.description, releaseDate: series.releaseDate, rating: Number(series.rating), backdropUrl: series.backdropUrl, posterUrl: series.posterUrl, season: activeSeason, episode: activeEpisode }} />
+          <VideoPlayer title={`${series.title} - S${activeSeason}:E${activeEpisode}`} embedUrl={playerUrl} sources={playerSources} history={{ tmdbId: params.id, type: "series", title: series.title, description: series.description, releaseDate: series.releaseDate, rating: Number(series.rating), backdropUrl: series.backdropUrl, posterUrl: series.posterUrl, season: activeSeason, episode: activeEpisode }} />
         </section>
       </div>
 

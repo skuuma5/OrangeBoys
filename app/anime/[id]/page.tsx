@@ -5,6 +5,7 @@ import { Play, Share2, Star, ArrowLeft, VolumeX, MessageSquare } from "lucide-re
 import { MyListButton } from "@/components/my-list-button"
 import { ShareButton } from "@/components/share-button"
 import Link from "next/link"
+import { getTVPlayerSources } from "@/lib/player-sources"
 
 export default async function AnimeDetailsPage({
   params,
@@ -19,11 +20,8 @@ export default async function AnimeDetailsPage({
   const seasonData = await getTVSeason(params.id, activeSeason)
   const episodes = seasonData.episodes || []
   const activeEpisode = Math.max(1, Number(searchParams?.episode) || 1)
-  const playerUrl = `https://vidsrc.xyz/embed/tv?tmdb=${params.id}&season=${activeSeason}&episode=${activeEpisode}&autoplay=1`
-  const playerFallbackUrls = [
-    `https://vidsrc.to/embed/tv/${params.id}/${activeSeason}/${activeEpisode}?autoplay=1`,
-    `https://www.2embed.cc/embed/tv/${params.id}/${activeSeason}/${activeEpisode}`,
-  ]
+  const playerSources = getTVPlayerSources(params.id, activeSeason, activeEpisode)
+  const playerUrl = playerSources[0].url
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -132,7 +130,7 @@ export default async function AnimeDetailsPage({
                 <span className="h-8 w-2 bg-primary rounded-full" />
                 Video Player
               </h2>
-              <VideoPlayer title={`${anime.title} - S${activeSeason}:E${activeEpisode}`} embedUrl={playerUrl} fallbackEmbedUrls={playerFallbackUrls} />
+              <VideoPlayer title={`${anime.title} - S${activeSeason}:E${activeEpisode}`} embedUrl={playerUrl} sources={playerSources} />
             </section>
           </div>
 
