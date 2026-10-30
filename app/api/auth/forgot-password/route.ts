@@ -26,7 +26,7 @@ export async function POST(request: Request) {
         },
       })
 
-      if (process.env.RESEND_API_KEY && process.env.EMAIL_FROM) {
+      if (process.env.RESEND_API_KEY) {
         const origin = new URL(request.url).origin
         const resetUrl = `${origin}/reset-password?token=${token}`
 
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            from: process.env.EMAIL_FROM,
+            from: process.env.EMAIL_FROM || "OrangeBoys Support <onboarding@resend.dev>",
             to: normalizedEmail,
             reply_to: process.env.EMAIL_REPLY_TO || "support.orangeboys@gmail.com",
             subject: "Reset your OrangeBoys password",

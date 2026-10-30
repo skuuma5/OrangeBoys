@@ -26,7 +26,7 @@ function ProviderLogo({ name, logo }: { name: string; logo: string }) {
     <img
       src={logo}
       alt={name}
-      className="max-h-full max-w-full object-contain transition-all group-hover:scale-105"
+      className="max-h-full max-w-full object-contain transition-opacity"
       onError={() => setFailed(true)}
     />
   )
@@ -100,7 +100,7 @@ export function ProviderSection() {
               key={provider.id}
               href={`/provider/${provider.id}?name=${encodeURIComponent(provider.name)}`}
               aria-label={`Browse ${provider.name}`}
-              className="group flex aspect-[16/10] w-[150px] shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-zinc-900/70 p-4 transition-all hover:-translate-y-1 hover:border-primary/50 hover:bg-zinc-800 sm:w-[180px] md:w-[210px] lg:w-[230px] xl:w-[250px]"
+              className="group flex aspect-[16/10] w-[150px] shrink-0 items-center justify-center rounded-2xl border border-transparent bg-zinc-900/70 p-4 transition-colors hover:bg-zinc-800/90 sm:w-[180px] md:w-[210px] lg:w-[230px] xl:w-[250px]"
             >
               <ProviderLogo name={provider.name} logo={provider.logo} />
             </Link>

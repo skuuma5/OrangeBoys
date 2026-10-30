@@ -19,8 +19,8 @@ export function Footer() {
         <p className="max-w-xl text-sm leading-6 text-white/55">
           OrangeBoys does not host, store, or distribute any media files. All content is sourced from third-party providers.
         </p>
-        <Link href="mailto:contact@orangeboys.com" className="mt-4 text-sm text-white/55 transition-colors hover:text-primary">
-          contact@orangeboys.com
+        <Link href="mailto:support.orangeboys@gmail.com" className="mt-4 text-sm text-white/55 transition-colors hover:text-primary">
+          support.orangeboys@gmail.com
         </Link>
 
         <div className="mt-10 flex items-center gap-6 text-xs font-medium text-white/40">
