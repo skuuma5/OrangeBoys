@@ -30,7 +30,7 @@ export function Hero({ content, items = [content] }: HeroProps) {
           src={activeContent.backdropUrl || activeContent.posterUrl}
           alt=""
           aria-hidden="true"
-          className="h-full w-full scale-110 object-cover opacity-[0.22] blur-[38px] saturate-[1.05] brightness-[0.78] transition-opacity duration-700"
+          className="h-full w-full scale-110 object-cover opacity-[0.10] blur-[42px] saturate-[1.02] brightness-[0.82] transition-opacity duration-700"
         />
       </div>
       {/* Backdrop Image */}
@@ -41,7 +41,9 @@ export function Hero({ content, items = [content] }: HeroProps) {
           alt={activeContent.title}
           className="h-full w-full object-cover"
         />
-        <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/35 to-transparent" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(5,5,5,.88)_0%,rgba(5,5,5,.72)_28%,rgba(5,5,5,.38)_48%,rgba(5,5,5,.08)_68%,transparent_100%)]" />
+        <div className="absolute inset-x-0 bottom-0 h-[38%] bg-gradient-to-t from-[#050505] via-[#050505]/75 to-transparent" />
+        <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/25 to-transparent" />
       </div>
 
       {/* Content Info */}
