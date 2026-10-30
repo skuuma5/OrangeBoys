@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
+    "postinstall": "prisma generate",
     "start": "next start",
     "lint": "next lint",
+    "db:migrate": "prisma migrate deploy",
     "db:setup": "prisma generate && prisma db push && prisma db seed",
     "db:reset": "prisma db push --force-reset && prisma db seed"
   },
@@ -58,3 +60,4 @@
     "typescript": "^5.3.3"
   }
 }
+

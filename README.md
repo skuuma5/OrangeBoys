@@ -76,6 +76,18 @@ OrangeBoys is designed to be easily rebranded:
 - **Styles**: Modify `tailwind.config.ts` and `app/globals.css` for deeper visual changes.
 - **Content**: Connect your own media server or authorized providers in the admin dashboard.
 
+## ▲ Vercel Deployment
+
+1. Create a hosted PostgreSQL database with Neon, Supabase, or another Vercel-compatible provider.
+2. Import the GitHub repository into Vercel and add the environment variables from `.env.example`.
+3. Set `DATABASE_URL` to the hosted PostgreSQL connection string.
+4. Set `NEXTAUTH_URL` to the final Vercel production URL and generate a strong `NEXTAUTH_SECRET`.
+5. Run migrations once with `npm run db:migrate`, then deploy the project.
+6. For GitHub login, add the Vercel callback URL to the OAuth app:
+   `https://your-domain.vercel.app/api/auth/callback/github`
+
+The checked-in migration is in `prisma/migrations/`. SQLite is only suitable for local development; persistent Vercel features require PostgreSQL.
+
 ## 🛡️ License
 
 This project is intended for commercial use as a white-label solution. Ensure you comply with all metadata provider (TMDB) terms of service and have proper licensing for any streaming content.
