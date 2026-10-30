@@ -30,7 +30,7 @@ export async function POST(request: Request) {
         const origin = new URL(request.url).origin
         const resetUrl = `${origin}/reset-password?token=${token}`
 
-        await fetch("https://api.resend.com/emails", {
+        const emailResponse = await fetch("https://api.resend.com/emails", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
@@ -39,10 +39,23 @@ export async function POST(request: Request) {
           body: JSON.stringify({
             from: process.env.EMAIL_FROM,
             to: normalizedEmail,
+            reply_to: process.env.EMAIL_REPLY_TO || "support.orangeboys@gmail.com",
             subject: "Reset your OrangeBoys password",
-            html: `<p>Reset your OrangeBoys password:</p><p><a href="${resetUrl}">Reset password</a></p><p>This link expires in 1 hour.</p>`,
+            html: `
+              <div style="font-family:Arial,sans-serif;color:#111;background:#fff;padding:24px">
+                <h2>Reset your OrangeBoys password</h2>
+                <p>Choose the button below to create a new password.</p>
+                <p><a href="${resetUrl}" style="display:inline-block;background:#f97316;color:#fff;padding:12px 18px;border-radius:8px;text-decoration:none">Reset password</a></p>
+                <p style="color:#666;font-size:13px">This link expires in 1 hour. If you did not request it, you can ignore this email.</p>
+              </div>
+            `,
           }),
         })
+
+        if (!emailResponse.ok) {
+          const emailError = await emailResponse.text()
+          console.error("Resend password reset failed:", emailError)
+        }
       }
     }
 
