@@ -44,6 +44,7 @@
     scroll-behavior: smooth;
   }
   body {
+    isolation: isolate;
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
     background:
@@ -51,19 +52,6 @@
       radial-gradient(circle at 82% 10%, rgba(255, 255, 255, 0.055), transparent 24rem),
       linear-gradient(145deg, #090909 0%, #030303 58%, #0c0907 100%);
     background-attachment: fixed;
-  }
-
-  body::before {
-    content: "";
-    position: fixed;
-    inset: -24px;
-    z-index: -1;
-    pointer-events: none;
-    background:
-      radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.035), transparent 18rem),
-      radial-gradient(circle at 18% 72%, rgba(255, 106, 0, 0.045), transparent 22rem);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
   }
 
   ::selection {

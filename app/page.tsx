@@ -15,7 +15,7 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col gap-0">
-      <Hero content={featuredContent} />
+      <Hero content={featuredContent} items={trendingMovies.slice(0, 7)} />
 
       <div className="relative -mt-16 space-y-4 pb-20 lg:-mt-20 lg:space-y-6">
         <ContinueWatching />
