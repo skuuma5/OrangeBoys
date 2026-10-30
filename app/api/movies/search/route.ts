@@ -1,10 +1,17 @@
 import { NextResponse } from "next/server"
-import { searchContent, mapTMDBContent } from "@/lib/tmdb"
+import { searchContent, mapTMDBContent, getTrendingMovies, getTrendingTV } from "@/lib/tmdb"
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const query = (searchParams.get("q") || "").trim()
-  if (!query) return NextResponse.json([])
+  if (!query) {
+    try {
+      const [movies, shows] = await Promise.all([getTrendingMovies(), getTrendingTV()])
+      return NextResponse.json([...movies.slice(0, 12), ...shows.slice(0, 12)])
+    } catch {
+      return NextResponse.json([])
+    }
+  }
 
   try {
     const data = await searchContent(query) as { results: any[] }

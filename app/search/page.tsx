@@ -4,16 +4,24 @@ import * as React from "react"
 import { Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import { ContentGrid } from "@/components/content-grid"
-import { PageHeader } from "@/components/page-header"
 import type { Content } from "@/types"
-import { Search as SearchIcon, X } from "lucide-react"
+import { Search as SearchIcon, X, ArrowLeft } from "lucide-react"
+import Link from "next/link"
 
 function SearchContent() {
   const searchParams = useSearchParams()
   const query = searchParams.get("q") || ""
   const [searchQuery, setSearchQuery] = React.useState(query)
   const [results, setResults] = React.useState<Content[]>([])
+  const [trending, setTrending] = React.useState<Content[]>([])
   const [loading, setLoading] = React.useState(false)
+
+  React.useEffect(() => {
+    fetch("/api/movies/search")
+      .then((response) => response.json())
+      .then((data) => setTrending(Array.isArray(data) ? data.slice(0, 12) : []))
+      .catch(() => setTrending([]))
+  }, [])
 
   React.useEffect(() => {
     if (!searchQuery.trim()) {
@@ -33,66 +41,65 @@ function SearchContent() {
       } finally {
         setLoading(false)
       }
-    }, 350)
+    }, 300)
 
     return () => window.clearTimeout(timeout)
   }, [searchQuery])
 
+  const visibleItems = searchQuery.trim() ? results : trending
+
   return (
-    <div className="container mx-auto px-4 pt-32 pb-20 md:px-8">
-      <div className="mb-12">
-        <PageHeader
-          title="Search"
-          description={searchQuery ? `Showing results for "${searchQuery}"` : "Search for your favorite movies, series, and anime."}
-        />
+    <div className="min-h-screen px-4 pb-24 pt-[84px] md:px-8">
+      <div className="mx-auto max-w-[1500px]">
+        <Link href="/" aria-label="Back" className="mb-12 flex h-10 w-10 items-center justify-center rounded-full text-white/75 transition-colors hover:bg-white/10 hover:text-white md:absolute md:left-8 md:top-8">
+          <ArrowLeft className="h-7 w-7" />
+        </Link>
 
-        <div className="relative max-w-2xl mt-8">
-          <SearchIcon className="absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-gray-500" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search by title, genre, or actor..."
-            className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-14 pr-12 text-lg text-white outline-none focus:border-primary/50 transition-all"
-          />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery("")}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white"
-            >
-              <X className="h-6 w-6" />
-            </button>
-          )}
+        <div className="mx-auto mb-14 max-w-[620px] pt-1 md:pt-8">
+          <div className="relative">
+            <SearchIcon className="absolute left-5 top-1/2 h-5 w-5 -translate-y-1/2 text-white/35" />
+            <input
+              autoFocus
+              type="search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search movies, TV shows & people..."
+              className="h-[58px] w-full rounded-full border border-white/10 bg-black/40 px-12 text-base text-white shadow-[0_12px_40px_rgba(0,0,0,.25)] outline-none backdrop-blur-xl transition-all placeholder:text-white/35 focus:border-primary/60 focus:bg-black/55"
+            />
+            {searchQuery && (
+              <button onClick={() => setSearchQuery("")} aria-label="Clear search" className="absolute right-4 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-white/45 hover:bg-white/10 hover:text-white">
+                <X className="h-5 w-5" />
+              </button>
+            )}
+          </div>
         </div>
+
+        {loading ? (
+          <div className="py-24 text-center text-sm text-white/45">Searching…</div>
+        ) : visibleItems.length > 0 ? (
+          <section>
+            <h1 className="mb-7 text-center text-lg font-bold text-white/90 md:text-xl">
+              {searchQuery.trim() ? `${results.length} results for “${searchQuery.trim()}”` : "Trending Today"}
+            </h1>
+            <ContentGrid items={visibleItems} />
+          </section>
+        ) : searchQuery.trim() ? (
+          <div className="flex flex-col items-center py-24 text-center">
+            <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-full border border-white/10 bg-white/5">
+              <SearchIcon className="h-7 w-7 text-white/35" />
+            </div>
+            <h2 className="text-lg font-bold">No results found</h2>
+            <p className="mt-2 text-sm text-white/45">Try another title or keyword.</p>
+          </div>
+        ) : null}
       </div>
-
-      {loading ? (
-        <div className="py-20 text-center text-gray-400">Searching movies and shows…</div>
-      ) : results.length > 0 ? (
-        <div className="space-y-8">
-          <div className="flex items-center gap-2 text-sm text-gray-400">
-            <span>{results.length} results found</span>
-          </div>
-          <ContentGrid items={results} />
-        </div>
-      ) : (
-        <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
-          <div className="h-20 w-20 rounded-full bg-white/5 flex items-center justify-center">
-            <SearchIcon className="h-10 w-10 text-gray-600" />
-          </div>
-          <h3 className="text-xl font-bold text-white">No results found</h3>
-          <p className="text-gray-400 max-w-md">
-            We couldn't find anything matching "{searchQuery}". Try different keywords or browse our categories.
-          </p>
-        </div>
-      )}
     </div>
   )
 }
 
 export default function SearchPage() {
   return (
-    <Suspense fallback={<div className="container mx-auto px-4 pt-32 pb-20 md:px-8"><div className="text-gray-400">Loading search…</div></div>}>
+    <Suspense fallback={<div className="min-h-screen pt-32 text-center text-white/45">Loading search…</div>}>
       <SearchContent />
     </Suspense>
   )
