@@ -1,7 +1,10 @@
 import { getTVDetails, getTVSeason, mapTMDBContent } from "@/lib/tmdb"
 import { VideoPlayer } from "@/components/video-player"
 import { ContentSection } from "@/components/content-section"
-import { Play, Plus, Star, Heart, MessageSquare } from "lucide-react"
+import { Play, Share2, Star, ArrowLeft, VolumeX, MessageSquare } from "lucide-react"
+import { MyListButton } from "@/components/my-list-button"
+import { ShareButton } from "@/components/share-button"
+import Link from "next/link"
 
 export default async function AnimeDetailsPage({
   params,
@@ -16,61 +19,59 @@ export default async function AnimeDetailsPage({
   const seasonData = await getTVSeason(params.id, activeSeason)
   const episodes = seasonData.episodes || []
   const activeEpisode = Math.max(1, Number(searchParams?.episode) || 1)
-  const playerUrl = `https://vidsrc.sh/embed/tv/${params.id}/${activeSeason}/${activeEpisode}?autoplay=1`
+  const playerUrl = `https://vidsrc.xyz/embed/tv?tmdb=${params.id}&season=${activeSeason}&episode=${activeEpisode}&autoplay=1`
+  const playerFallbackUrls = [
+    `https://vidsrc.to/embed/tv/${params.id}/${activeSeason}/${activeEpisode}?autoplay=1`,
+    `https://www.2embed.cc/embed/tv/${params.id}/${activeSeason}/${activeEpisode}`,
+  ]
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Immersive Anime Header */}
-      <div className="relative h-[75vh] w-full">
-        <img
-          src={anime.backdropUrl}
-          alt={anime.title}
-          className="h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black via-black/20 to-transparent" />
+      <section className="relative h-[72vh] min-h-[620px] w-full overflow-hidden">
+        <img src={anime.backdropUrl} alt="" className="absolute inset-0 h-full w-full object-cover object-center" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black via-black/75 to-black/15" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/25" />
 
-        <div className="container absolute bottom-0 left-0 right-0 px-4 pb-16 md:px-8">
-          <div className="max-w-3xl space-y-6">
-            <div className="flex items-center gap-3">
-              <span className="bg-primary px-3 py-1 rounded text-xs font-bold uppercase tracking-widest text-white shadow-[0_0_15px_rgba(255,106,0,0.5)]">Anime</span>
-              <span className="text-gray-300 font-bold">TV Series</span>
-              <span className="text-gray-400">•</span>
-              <span className="text-gray-300 font-bold">{data.number_of_episodes || data.seasons?.length || "—"} Episodes</span>
-            </div>
+        <Link href="/anime" className="absolute left-5 top-24 z-20 flex h-12 w-12 items-center justify-center rounded-full bg-black/35 text-white backdrop-blur-md transition hover:bg-primary md:left-8 md:top-28" aria-label="Back to anime">
+          <ArrowLeft className="h-6 w-6" />
+        </Link>
 
-            <h1 className="text-5xl font-black tracking-tighter md:text-8xl text-white">
-              {anime.title}
-            </h1>
-
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-2">
-                <div className="flex text-orange-400">
-                  {[1, 2, 3, 4, 5].map((s) => (
-                    <Star key={s} className={`h-5 w-5 ${s === 5 ? "text-gray-600" : "fill-current"}`} />
-                  ))}
-                </div>
-                <span className="text-lg font-bold">{anime.rating}</span>
+        <div className="absolute bottom-0 left-0 right-0 z-10 w-full px-5 pb-10 sm:px-8 md:px-12 lg:px-16 md:pb-14">
+          <div className="grid items-end gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
+            <div className="space-y-5">
+              {anime.genres[0] && <p className="font-medium text-gray-200">{anime.genres[0]}</p>}
+              <h1 className="max-w-3xl text-4xl font-black leading-[0.95] tracking-tight sm:text-5xl md:text-7xl">{anime.title}</h1>
+              <div className="flex flex-wrap items-center gap-3 text-sm font-semibold text-gray-200">
+                <span>{anime.releaseDate}</span>
+                <span className="text-gray-500">•</span>
+                <span className="rounded border border-white/30 px-2 py-0.5 text-xs">TV-14</span>
+                <span className="text-gray-500">•</span>
+                <span className="flex items-center gap-1 text-yellow-400"><Star className="h-4 w-4 fill-current" />{anime.rating}</span>
+                <span className="text-gray-500">•</span>
+                <span>{data.number_of_seasons || 0} Seasons</span>
               </div>
-              <span className="text-gray-400">|</span>
-              <span className="text-sm font-medium text-gray-300">{anime.genres.slice(0, 3).join(", ")}</span>
+              <p className="max-w-2xl text-sm leading-6 text-gray-300 sm:text-base">{anime.description || "No synopsis is available for this anime."}</p>
+              <div className="flex items-center gap-3 pt-1">
+                <a href="#player" className="flex h-12 items-center gap-2 rounded-full bg-white px-7 text-base font-bold text-black transition hover:bg-primary hover:text-white">
+                  <Play className="h-5 w-5 fill-current" /> Play
+                </a>
+                <MyListButton tmdbId={params.id} type="anime" title={anime.title} description={anime.description} releaseDate={anime.releaseDate} rating={Number(anime.rating)} backdropUrl={anime.backdropUrl} posterUrl={anime.posterUrl} />
+                <ShareButton title={anime.title} />
+              </div>
             </div>
 
-            <div className="flex flex-wrap gap-4 pt-4">
-              <a href="#player" className="flex items-center gap-2 rounded-2xl bg-primary px-10 py-5 text-xl font-black text-white transition-all hover:scale-105 hover:brightness-110 orange-glow">
-                <Play className="h-7 w-7 fill-white" />
-                WATCH NOW
-              </a>
-              <button className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10 text-white backdrop-blur-md transition-all hover:bg-white/20 border border-white/10">
-                <Plus className="h-7 w-7" />
-              </button>
-              <button className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/10 text-white backdrop-blur-md transition-all hover:bg-white/20 border border-white/10">
-                <Heart className="h-7 w-7" />
-              </button>
+            <div className="hidden w-full max-w-[320px] justify-self-end rounded-2xl border border-white/10 bg-black/55 p-5 backdrop-blur-md lg:block xl:w-[320px]">
+              <h3 className="mb-4 text-sm font-bold uppercase tracking-widest text-gray-400">Details</h3>
+              <dl className="space-y-3 text-sm">
+                <div className="flex justify-between border-b border-white/5 pb-3"><dt className="text-gray-500">Status</dt><dd>{data.status || "Unknown"}</dd></div>
+                <div className="flex justify-between border-b border-white/5 pb-3"><dt className="text-gray-500">Language</dt><dd>{data.original_language?.toUpperCase() || "JA"}</dd></div>
+                <div className="flex justify-between border-b border-white/5 pb-3"><dt className="text-gray-500">First Air Date</dt><dd>{data.first_air_date || "—"}</dd></div>
+                <div className="flex justify-between"><dt className="text-gray-500">Seasons</dt><dd>{data.number_of_seasons || 0}</dd></div>
+              </dl>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       <div className="container mx-auto px-4 py-16 md:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-16">
@@ -131,7 +132,7 @@ export default async function AnimeDetailsPage({
                 <span className="h-8 w-2 bg-primary rounded-full" />
                 Video Player
               </h2>
-              <VideoPlayer title={`${anime.title} - S${activeSeason}:E${activeEpisode}`} embedUrl={playerUrl} />
+              <VideoPlayer title={`${anime.title} - S${activeSeason}:E${activeEpisode}`} embedUrl={playerUrl} fallbackEmbedUrls={playerFallbackUrls} />
             </section>
           </div>
 

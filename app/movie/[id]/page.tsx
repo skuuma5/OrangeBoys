@@ -3,6 +3,7 @@ import { VideoPlayer } from "@/components/video-player"
 import { ContentSection } from "@/components/content-section"
 import { Play, Share2, Star, Calendar, Clock, Globe, ArrowLeft, Eye, VolumeX } from "lucide-react"
 import { MyListButton } from "@/components/my-list-button"
+import { ShareButton } from "@/components/share-button"
 import Link from "next/link"
 
 export default async function MovieDetailsPage({ params }: { params: { id: string } }) {
@@ -11,7 +12,11 @@ export default async function MovieDetailsPage({ params }: { params: { id: strin
   const similarMovies = (data.similar?.results || []).slice(0, 12).map((item: any) => mapTMDBContent(item, "movie"))
   const cast = (data.credits?.cast || []).slice(0, 10)
   const videos = (data.videos?.results || []).filter((video: any) => video.site === "YouTube" && ["Trailer", "Teaser"].includes(video.type)).slice(0, 6)
-  const playerUrl = `https://vidsrc.sh/embed/movie/${params.id}?autoplay=1`
+  const playerUrl = `https://vidsrc.xyz/embed/movie?tmdb=${params.id}&autoplay=1`
+  const playerFallbackUrls = [
+    `https://vidsrc.to/embed/movie/${params.id}?autoplay=1`,
+    `https://www.2embed.cc/embed/movie/${params.id}`,
+  ]
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -55,8 +60,7 @@ export default async function MovieDetailsPage({ params }: { params: { id: strin
                   <Play className="h-5 w-5 fill-current" /> Play
                 </a>
                 <MyListButton tmdbId={params.id} type="movie" title={movie.title} description={movie.description} releaseDate={movie.releaseDate} rating={Number(movie.rating)} backdropUrl={movie.backdropUrl} posterUrl={movie.posterUrl} />
-                <button aria-label="Share" className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-md transition hover:bg-white/20"><Share2 className="h-5 w-5" /></button>
-                <button aria-label="Mute" className="ml-auto hidden h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-md transition hover:bg-white/20 sm:flex"><VolumeX className="h-5 w-5" /></button>
+                <ShareButton title={movie.title} />
               </div>
             </div>
 
@@ -118,7 +122,7 @@ export default async function MovieDetailsPage({ params }: { params: { id: strin
 
         <section id="player" className="scroll-mt-28 py-10">
           <h2 className="mb-6 text-2xl font-bold">Watch {movie.title}</h2>
-          <VideoPlayer title={movie.title} embedUrl={playerUrl} history={{ tmdbId: params.id, type: "movie", title: movie.title, description: movie.description, releaseDate: movie.releaseDate, rating: Number(movie.rating), backdropUrl: movie.backdropUrl, posterUrl: movie.posterUrl }} />
+          <VideoPlayer title={movie.title} embedUrl={playerUrl} fallbackEmbedUrls={playerFallbackUrls} history={{ tmdbId: params.id, type: "movie", title: movie.title, description: movie.description, releaseDate: movie.releaseDate, rating: Number(movie.rating), backdropUrl: movie.backdropUrl, posterUrl: movie.posterUrl }} />
         </section>
       </div>
 

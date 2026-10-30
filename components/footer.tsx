@@ -1,5 +1,4 @@
 import Link from "next/link"
-import { ArrowUp } from "lucide-react"
 
 export function Footer() {
   return (
@@ -19,7 +18,12 @@ export function Footer() {
         <p className="max-w-xl text-sm leading-6 text-white/55">
           OrangeBoys does not host, store, or distribute any media files. All content is sourced from third-party providers.
         </p>
-        <Link href="mailto:support.orangeboys@gmail.com" className="mt-4 text-sm text-white/55 transition-colors hover:text-primary">
+        <Link
+          href="https://mail.google.com/mail/?view=cm&fs=1&to=support.orangeboys@gmail.com&su=OrangeBoys%20Feedback"
+          target="_blank"
+          rel="noreferrer"
+          className="mt-4 text-sm text-white/55 transition-colors hover:text-primary"
+        >
           support.orangeboys@gmail.com
         </Link>
 
@@ -33,14 +37,6 @@ export function Footer() {
 
         <p className="mt-6 text-xs text-white/30">© 2026 OrangeBoys. All rights reserved.</p>
       </div>
-
-      <Link
-        href="#top"
-        aria-label="Back to top"
-        className="fixed bottom-5 right-5 z-40 flex h-11 w-11 items-center justify-center rounded-full border border-primary/60 bg-red-950/70 text-primary shadow-[0_0_18px_rgba(255,106,0,0.15)] backdrop-blur-md transition-all hover:bg-primary hover:text-white md:bottom-7 md:right-8"
-      >
-        <ArrowUp className="h-5 w-5" />
-      </Link>
     </footer>
   )
 }

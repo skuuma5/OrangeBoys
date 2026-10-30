@@ -20,6 +20,7 @@ interface VideoPlayerProps {
   title: string
   onClose?: () => void
   embedUrl?: string
+  fallbackEmbedUrls?: string[]
   history?: {
     tmdbId: string
     type: "movie" | "series" | "anime"
@@ -35,13 +36,18 @@ interface VideoPlayerProps {
   }
 }
 
-export function VideoPlayer({ title, onClose, embedUrl, history }: VideoPlayerProps) {
+export function VideoPlayer({ title, onClose, embedUrl, fallbackEmbedUrls = [], history }: VideoPlayerProps) {
   const [isPlaying, setIsPlaying] = React.useState(false)
   const [progress, setProgress] = React.useState(0)
   const [volume, setVolume] = React.useState(80)
   const [isMuted, setIsMuted] = React.useState(false)
   const [showControls, setShowControls] = React.useState(true)
   const controlsTimeoutRef = React.useRef<NodeJS.Timeout | null>(null)
+  const sources = React.useMemo(
+    () => Array.from(new Set([embedUrl, ...fallbackEmbedUrls].filter(Boolean))) as string[],
+    [embedUrl, fallbackEmbedUrls],
+  )
+  const [sourceIndex, setSourceIndex] = React.useState(0)
 
   React.useEffect(() => {
     if (!embedUrl || !history) return
@@ -60,14 +66,33 @@ export function VideoPlayer({ title, onClose, embedUrl, history }: VideoPlayerPr
 
   if (embedUrl) {
     return (
-      <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-white/10 bg-black">
-        <iframe
-          className="absolute inset-0 h-full w-full"
-          src={embedUrl}
-          title={title}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowFullScreen
-        />
+      <div className="space-y-3">
+        <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-white/10 bg-black">
+          <iframe
+            key={sources[sourceIndex]}
+            className="absolute inset-0 h-full w-full"
+            src={sources[sourceIndex]}
+            title={title}
+            referrerPolicy="origin"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+          />
+        </div>
+        {sources.length > 1 && (
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="mr-1 text-xs font-semibold text-white/45">Player source</span>
+            {sources.map((source, index) => (
+              <button
+                key={source}
+                type="button"
+                onClick={() => setSourceIndex(index)}
+                className={`rounded-lg px-3 py-1.5 text-xs font-bold transition-colors ${sourceIndex === index ? "bg-primary text-white" : "border border-white/10 bg-white/5 text-white/70 hover:text-white"}`}
+              >
+                Server {index + 1}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     )
   }

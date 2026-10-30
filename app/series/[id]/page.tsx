@@ -3,6 +3,7 @@ import { VideoPlayer } from "@/components/video-player"
 import { ContentSection } from "@/components/content-section"
 import { Play, Share2, Star, Calendar, Tv, ChevronDown, ArrowLeft, VolumeX, Grid2X2 } from "lucide-react"
 import { MyListButton } from "@/components/my-list-button"
+import { ShareButton } from "@/components/share-button"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 
@@ -23,7 +24,11 @@ export default async function SeriesDetailsPage({
   const cast = (data.credits?.cast || []).slice(0, 10)
   const similarSeries = (data.similar?.results || []).slice(0, 12).map((item: any) => mapTMDBContent(item, "series"))
   const videos = (data.videos?.results || []).filter((video: any) => video.site === "YouTube" && ["Trailer", "Teaser"].includes(video.type)).slice(0, 6)
-  const playerUrl = `https://vidsrc.sh/embed/tv/${params.id}/${activeSeason}/${activeEpisode}?autoplay=1`
+  const playerUrl = `https://vidsrc.xyz/embed/tv?tmdb=${params.id}&season=${activeSeason}&episode=${activeEpisode}&autoplay=1`
+  const playerFallbackUrls = [
+    `https://vidsrc.to/embed/tv/${params.id}/${activeSeason}/${activeEpisode}?autoplay=1`,
+    `https://www.2embed.cc/embed/tv/${params.id}/${activeSeason}/${activeEpisode}`,
+  ]
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -53,8 +58,7 @@ export default async function SeriesDetailsPage({
               <div className="flex items-center gap-3 pt-1">
                 <a href="#episodes" className="flex h-12 items-center gap-2 rounded-full bg-white px-7 text-base font-bold text-black transition hover:bg-primary hover:text-white"><Play className="h-5 w-5 fill-current" /> Play</a>
                 <MyListButton tmdbId={params.id} type="series" title={series.title} description={series.description} releaseDate={series.releaseDate} rating={Number(series.rating)} backdropUrl={series.backdropUrl} posterUrl={series.posterUrl} />
-                <button aria-label="Share" className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-md transition hover:bg-white/20"><Share2 className="h-5 w-5" /></button>
-                <button aria-label="Mute" className="ml-auto hidden h-12 w-12 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-md transition hover:bg-white/20 sm:flex"><VolumeX className="h-5 w-5" /></button>
+                <ShareButton title={series.title} />
               </div>
             </div>
 
@@ -138,7 +142,7 @@ export default async function SeriesDetailsPage({
 
         <section id="player" className="scroll-mt-28 py-10">
           <h2 className="mb-6 text-2xl font-bold">Watch {series.title}</h2>
-          <VideoPlayer title={`${series.title} - S${activeSeason}:E${activeEpisode}`} embedUrl={playerUrl} history={{ tmdbId: params.id, type: "series", title: series.title, description: series.description, releaseDate: series.releaseDate, rating: Number(series.rating), backdropUrl: series.backdropUrl, posterUrl: series.posterUrl, season: activeSeason, episode: activeEpisode }} />
+          <VideoPlayer title={`${series.title} - S${activeSeason}:E${activeEpisode}`} embedUrl={playerUrl} fallbackEmbedUrls={playerFallbackUrls} history={{ tmdbId: params.id, type: "series", title: series.title, description: series.description, releaseDate: series.releaseDate, rating: Number(series.rating), backdropUrl: series.backdropUrl, posterUrl: series.posterUrl, season: activeSeason, episode: activeEpisode }} />
         </section>
       </div>
 
