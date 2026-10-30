@@ -1,10 +1,9 @@
 import { ContentGrid } from "@/components/content-grid"
-import { PageHeader } from "@/components/page-header"
-import { getPopularMovies } from "@/lib/tmdb"
-import { Filter, SlidersHorizontal } from "lucide-react"
+import { CatalogFilters } from "@/components/catalog-filters"
+import { getCatalogContent } from "@/lib/tmdb"
 
-export default async function MoviesPage() {
-  const movies = await getPopularMovies()
+export default async function MoviesPage({ searchParams }: { searchParams: { genre?: string; sort?: string } }) {
+  const movies = await getCatalogContent("movie", { genre: searchParams.genre, sort: searchParams.sort })
   const featured = movies[0]
 
   return (
@@ -30,8 +29,7 @@ export default async function MoviesPage() {
             <a href="/category/movie/top_rated" className="rounded-full border border-white/10 bg-white/5 px-5 py-2 text-sm font-bold text-white hover:border-primary/50">Top Rated</a>
           </div>
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white"><Filter className="h-4 w-4" /> Genres</button>
-            <button className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white"><SlidersHorizontal className="h-4 w-4" /> Sort</button>
+            <CatalogFilters mediaType="movie" />
           </div>
         </div>
         <ContentGrid items={movies} />

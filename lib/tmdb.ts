@@ -127,6 +127,42 @@ export async function getPopularAnime() {
   return data.results.map((item: any) => mapTMDBContent(item, "anime"));
 }
 
+export async function getCatalogContent(
+  mediaType: "movie" | "tv" | "anime",
+  options: { genre?: string; sort?: string } = {},
+) {
+  const isAnime = mediaType === "anime";
+  const endpoint = `/discover/${isAnime ? "tv" : mediaType}`;
+  const sortMap: Record<string, string> = {
+    popular: "popularity.desc",
+    rating: "vote_average.desc",
+    newest: isAnime ? "first_air_date.desc" : "primary_release_date.desc",
+  };
+  const params: Record<string, string> = {
+    language: "en-US",
+    sort_by: sortMap[options.sort || "popular"] || sortMap.popular,
+    page: "1",
+  };
+
+  if (options.genre) {
+    params.with_genres = options.genre;
+  }
+
+  if (isAnime) {
+    params.with_genres = options.genre || "16";
+    params.with_origin_country = "JP";
+    params["vote_count.gte"] = "50";
+  }
+
+  if (options.sort === "rating") {
+    params["vote_count.gte"] = "100";
+  }
+
+  const data = await fetchTMDB(endpoint, params);
+  const type = isAnime ? "anime" : mediaType === "tv" ? "series" : "movie";
+  return (data.results || []).map((item: any) => mapTMDBContent(item, type));
+}
+
 export async function getDiscoverContent(
   mediaType: "movie" | "tv" | "anime",
   category: "popular" | "trending" | "top_rated" = "popular",
