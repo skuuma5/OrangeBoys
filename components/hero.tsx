@@ -30,10 +30,8 @@ export function Hero({ content, items = [content] }: HeroProps) {
           src={activeContent.backdropUrl || activeContent.posterUrl}
           alt=""
           aria-hidden="true"
-          className="h-full w-full scale-110 object-cover opacity-[0.34] blur-[34px] saturate-[1.12] brightness-[0.72] transition-opacity duration-700"
-          style={{ maskImage: "linear-gradient(to bottom, black 0%, black 34%, rgba(0,0,0,.82) 55%, transparent 92%)", WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 34%, rgba(0,0,0,.82) 55%, transparent 92%)" }}
+          className="h-full w-full scale-110 object-cover opacity-[0.22] blur-[38px] saturate-[1.05] brightness-[0.78] transition-opacity duration-700"
         />
-        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,.08)_0%,rgba(0,0,0,.42)_38%,rgba(0,0,0,.88)_72%,#000_100%)]" />
       </div>
       {/* Backdrop Image */}
       <div className="absolute inset-0">
@@ -43,10 +41,7 @@ export function Hero({ content, items = [content] }: HeroProps) {
           alt={activeContent.title}
           className="h-full w-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/45 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 h-[40%] bg-gradient-to-t from-black via-black/65 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/10 to-transparent" />
-        <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/70 to-transparent" />
+        <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/35 to-transparent" />
       </div>
 
       {/* Content Info */}

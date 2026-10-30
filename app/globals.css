@@ -47,10 +47,7 @@
     isolation: isolate;
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
-    background:
-      radial-gradient(circle at 12% 18%, rgba(255, 106, 0, 0.11), transparent 28rem),
-      radial-gradient(circle at 82% 10%, rgba(255, 255, 255, 0.055), transparent 24rem),
-      linear-gradient(145deg, #090909 0%, #030303 58%, #0c0907 100%);
+    background: #050505;
     background-attachment: fixed;
   }
 
