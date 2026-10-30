@@ -2,6 +2,8 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
 import GithubProvider from "next-auth/providers/github"
+import GoogleProvider from "next-auth/providers/google"
+import bcrypt from "bcryptjs"
 import { prisma } from "@/lib/prisma"
 
 declare module "next-auth" {
@@ -30,8 +32,12 @@ export const authOptions: NextAuthOptions = {
   },
   providers: [
     GithubProvider({
-      clientId: process.env.GITHUB_ID || "",
-      clientSecret: process.env.GITHUB_SECRET || "",
+      clientId: process.env.AUTH_GITHUB_ID || process.env.GITHUB_ID || "",
+      clientSecret: process.env.AUTH_GITHUB_SECRET || process.env.GITHUB_SECRET || "",
+    }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
     }),
     CredentialsProvider({
       name: "Credentials",
@@ -40,8 +46,6 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        // This is a demo authorize function
-        // In a real app, you would verify the password with bcrypt
         if (!credentials?.email || !credentials?.password) return null
 
         const user = await prisma.user.findUnique({
@@ -50,8 +54,9 @@ export const authOptions: NextAuthOptions = {
 
         if (!user) return null
 
-        // Demo check (replace with real validation)
-        if (credentials.password === "password123") {
+        if (!user.password) return null
+
+        if (await bcrypt.compare(credentials.password, user.password)) {
           return user
         }
 
